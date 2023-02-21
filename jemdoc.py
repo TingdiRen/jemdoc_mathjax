@@ -1610,9 +1610,9 @@ def main(args):
         inp_files = [inp_path if ('.jemdoc' in inp_path) else (inp_path + '.jemdoc')]
 
     out_path = args.output
-    if os.path.isdir(out_path):
-        if not os.path.exists(out_path):
-            os.mkdir(out_path)
+
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
 
     out_files = [re.sub(r'.jemdoc$', '', i) + '.html' for i in inp_files]
     for ii, i in enumerate(inp_files):
@@ -1623,10 +1623,10 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", default='./jemdocs/',
+    parser.add_argument("-i", "--input", default='./jemdocs',
                         help='the directory of input jemdoc files, file name included only for single jemdoc file')
-    parser.add_argument("-o", "--output", default='./htmls/',
-                        help='the directory of output html files, file name included only for single jemdoc file')
+    parser.add_argument("-o", "--output", default='./htmls',
+                        help='the directory of output html files, file name is not allowed to be included.')
     parser.add_argument("-c", "--conf", default='./mysite.conf',
                         help='the path of .conf file')
     args = parser.parse_args()
