@@ -17,7 +17,8 @@ configuration
 
 goodies
     vim, make           [stuff.html]
-    latex equations     [latex.html]
+	latex equations     [latex.html]
+    mathjax             [mathjax.html]
     tables              [tables.html]
 
 
