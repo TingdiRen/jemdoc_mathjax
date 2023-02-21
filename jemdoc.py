@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 # Copyright (C) 2007-2012 Jacob Mattingley (jacobm@stanford.edu).
 #
 # This file is part of jemdoc.
@@ -31,19 +30,6 @@ from subprocess import *
 from types import *
 import tempfile
 
-def info():
-    print(__doc__)
-    print('Platform: ' + sys.platform + '.')
-    print('Python: %s, located at %s.' % (sys.version[:5], sys.executable))
-    print('Equation support:', end=' ')
-    (supported, message) = testeqsupport()
-    if supported:
-        print('yes.')
-    else:
-        print('no.')
-    print(message)
-
-
 def testeqsupport():
     supported = True
     msg = ''
@@ -66,7 +52,7 @@ def testeqsupport():
 
 
 class controlstruct(object):
-    def __init__(self, infile, outfile=None, conf=None, inname=None, eqs=True,
+    def __init__(self, infile, outfile=None, conf=None, inname=None, inppath=None, eqs=True,
                  eqdir='eqs', eqdpi=130):
         self.inname = inname
         self.inf = infile
@@ -85,6 +71,7 @@ class controlstruct(object):
         self.analytics = None
         self.eqbd = {}  # equation base depth.
         self.baseline = None
+        self.inppath = inppath
 
     def pushfile(self, newfile):
         self.otherfiles.insert(0, self.inf)
@@ -1314,6 +1301,7 @@ def procfile(f):
                     sidemenu = True
                     r = re.compile(r'(?<!\\){(.*?)(?<!\\)}', re.M + re.S)
                     g = re.findall(r, b)
+                    g[0] = os.path.join(f.inppath, g[0])
                     if len(g) > 3 or len(g) < 2:
                         raise SyntaxError('sidemenu error on line %d' % f.linenum)
 
@@ -1610,13 +1598,6 @@ def procfile(f):
         f.outf.close()
 
 def main(args):
-    if args.show_config:
-        print(standardconf())
-        raise SystemExit
-    elif args.version:
-        info()
-        raise SystemExit
-
     # Conf
     conf_path = args.conf
     conf = parseconf(conf_path)
@@ -1636,14 +1617,12 @@ def main(args):
     out_files = [re.sub(r'.jemdoc$', '', i) + '.html' for i in inp_files]
     for ii, i in enumerate(inp_files):
         infile = io.open(os.path.join(inp_path, i), 'rb')
-        outfile = io.open(os.path.join(out_path,out_files[ii]), 'w')
-        f = controlstruct(infile, outfile, conf, i)
+        outfile = io.open(os.path.join(out_path,out_files[ii]), 'w', encoding='utf-8')
+        f = controlstruct(infile=infile, outfile=outfile, conf=conf, inname=i, inppath=inp_path)
         procfile(f)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--show-config", help='show the config content')
-    parser.add_argument("-v", "--version", help='print the version')
     parser.add_argument("-i", "--input", default='./jemdocs/',
                         help='the directory of input jemdoc files, file name included only for single jemdoc file')
     parser.add_argument("-o", "--output", default='./htmls/',
@@ -1653,3 +1632,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     main(args)
     print('>>>> html files are restored at {}'.format(args.output))
+    #print(standardconf())
