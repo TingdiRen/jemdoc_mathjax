@@ -1623,9 +1623,9 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", default='./jemdocs',
+    parser.add_argument("-i", "--input", default='../jemdocs',
                         help='the directory of input jemdoc files, file name included only for single jemdoc file')
-    parser.add_argument("-o", "--output", default='./htmls',
+    parser.add_argument("-o", "--output", default='../',
                         help='the directory of output html files, file name is not allowed to be included.')
     parser.add_argument("-c", "--conf", default='./mysite.conf',
                         help='the path of .conf file')
